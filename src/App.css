@@ -1,0 +1,55 @@
+
+.App {
+  text-align: center;
+
+}
+
+.borderUser {
+  width: 50%;
+  height: auto;
+  margin: 0 auto;
+  border-color:#AAA9A7;
+}
+
+.siteName {
+	font-family: 'Modak', cursive;
+	text-transform: uppercase;
+	font-size: 2em;
+	text-align: center;
+}
+
+.threadStyle {
+	background-color:#403F3D;
+	color:black;
+	width: 75%;
+	margin:0 auto;
+	border-radius:15px 50px 30px;
+}
+
+#questionStyle {
+	color:black;
+	font-family: 'Roboto', sans-serif;
+	text-align:center;
+	margin-top:0;
+	text-decoration: underline;
+}
+.questionBox {
+	background-color:#403F3D;
+	resize: none;
+	border-radius:15px;
+
+}
+.commentBox {
+	background-color:#403F3D;
+	resize: none;
+	border:none;
+}
+
+.ediText {
+	background-color:#403F3D;
+}
+
+hr {
+	width: 50%;
+	text-align:left;
+}
