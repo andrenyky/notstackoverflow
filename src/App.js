@@ -1,9 +1,11 @@
 import React,{Component} from 'react';
 import './App.css';
-import {MDCTextField} from '@material/textfield';
 import Threads from './Components/Threads';
 import QuestionBox from './Components/questionBox';
 import LogIn from './Components/LogIn';
+
+
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -12,13 +14,27 @@ class App extends Component {
       hasUsername:false,
       username:"",
       question:"",
-      existingThreads:[],
-      comment:""
+      existingThreads:[{
+  threadQuestion:"Hello, how are you?",
+  threadComments:[ {commText:"I'm fine, how about you?",
+    id:1+Math.random(),
+    isInEditMode:false,
+    wasEdited:false,
+    isAnswerBest:false},{commText:"test test test",
+    id:1+Math.random(),
+    isInEditMode:false,
+    wasEdited:false,
+    isAnswerBest:false}],
+  id:1+Math.random(),
+  bestAnswer:false
+}],
+      comment:"",
 
     }
   }
 
 /* FUNCTIONS*/
+
 userInput = (event) => {
   this.setState({
     username: event.target.value
@@ -39,6 +55,8 @@ inputQuestion = question => (event) => {
 }
 
 
+
+
 addQuestion = () => {
   if(this.state.question.length>0)
   {
@@ -46,7 +64,8 @@ addQuestion = () => {
   threadQuestion:this.state.question,
   threadComments:[],
   id:1+Math.random(),
-  comment:""
+  comment:``,
+  bestAnswer:false
  }
  const list= [...this.state.existingThreads]
  list.push(newThread);
@@ -76,6 +95,10 @@ addComment = (thread) => {
   const newComm={
     commText:thread.comment.slice(),
     id:1+Math.random(),
+    isInEditMode:false,
+    wasEdited:false,
+    isAnswerBest:false
+    
   }
   if(newComm.commText.length>0)
   {
@@ -86,14 +109,14 @@ addComment = (thread) => {
     {
       existingThreads_renew[i].threadComments.push(newComm);
       existingThreads_renew[i].comment="";
-      console.log("Thread has new comm",existingThreads_renew[i]);
+      
       break;
     }
   }
   this.setState({
     existingThreads_renew,
   })
-  console.log("ThreadComms",thread.threadComments)
+  
 }
 }
 
@@ -101,7 +124,100 @@ addComment = (thread) => {
  onSave = val => {  
 }
 
+edit = (id,comment_id) => {
+  const existingThreads_renew=[...this.state.existingThreads]
+  for(let i=0;i<existingThreads_renew.length;i++)
+  {
+    if(id===existingThreads_renew[i].id)
+    {
+      for( let j=0;j<existingThreads_renew[i].threadComments.length;j++)
+        if (comment_id===existingThreads_renew[i].threadComments[j].id)
+        {
+          existingThreads_renew[i].threadComments[j].isInEditMode=true;
+          break;
+        }
+    }
+  }
+  this.setState({
+    existingThreads_renew,
+  })
+}
+editComment = (id,comment_id) => event => {
+  const existingThreads_renew=[...this.state.existingThreads]
+  for(let i=0;i<existingThreads_renew.length;i++)
+  {
+    if(id===existingThreads_renew[i].id)
+    {
+      for( let j=0;j<existingThreads_renew[i].threadComments.length;j++)
+        if (comment_id===existingThreads_renew[i].threadComments[j].id)
+        {
+          existingThreads_renew[i].threadComments[j].commText=event.target.value;
+          
+          break;
+        }
+    }
+  }
+  this.setState({
+    existingThreads_renew,
+  })
+}
 
+submitEdit= (id,comment_id) => {
+ const existingThreads_renew=[...this.state.existingThreads]
+  for(let i=0;i<existingThreads_renew.length;i++)
+  {
+    if(id===existingThreads_renew[i].id)
+    {
+      for( let j=0;j<existingThreads_renew[i].threadComments.length;j++)
+        if (comment_id===existingThreads_renew[i].threadComments[j].id)
+        {
+          existingThreads_renew[i].threadComments[j].wasEdited=true;
+          existingThreads_renew[i].threadComments[j].isInEditMode=false;
+            
+          break;
+        }
+    }
+  }
+  this.setState({
+    existingThreads_renew,
+
+  })
+}
+
+likeAnswer= (id,comment_id) => {
+ const existingThreads_renew=[...this.state.existingThreads]
+  for(let i=0;i<existingThreads_renew.length;i++)
+  {
+    if(id===existingThreads_renew[i].id)
+    { if(existingThreads_renew[i].bestAnswer===false)
+      {
+      for( let j=0;j<existingThreads_renew[i].threadComments.length;j++)
+        if (comment_id===existingThreads_renew[i].threadComments[j].id)
+        {
+          existingThreads_renew[i].threadComments[j].isAnswerBest=true;
+          existingThreads_renew[i].bestAnswer=true;
+          break;
+        }
+      }
+    }
+  }
+
+   this.setState({
+    existingThreads_renew
+  })
+}
+
+checkBestAnswer = (thread,comment) => {
+      if(thread.bestAnswer===false)
+      {
+        if(comment.isAnswerBest===true)
+        { thread.bestAnswer=true;
+          return true;
+        }
+
+      }
+      return false;
+}
 
   render() {
  return (
@@ -120,7 +236,15 @@ addComment = (thread) => {
       <Threads  existingThreads={this.state.existingThreads} 
       onSave={this.onSave} 
       inputComment={this.inputComment} 
-      addComment ={this.addComment}/>
+      addComment ={this.addComment}
+      edit={this.edit}
+      editComment={this.editComment}
+      submitEdit={this.submitEdit}
+      username={this.state.username}
+      isAnswerBest={this.state.isAnswerBest}
+      likeAnswer={this.likeAnswer}
+      checkBestAnswer={this.checkBestAnswer}/>
+
     </div>
   ) 
 
@@ -128,7 +252,9 @@ addComment = (thread) => {
 
 
   (  /*Log page*/
+   
     <LogIn userInput={this.userInput} setUser={this.setUser}/>
+      
   )
   );
 }
